@@ -1,27 +1,30 @@
 import React, { useState, useEffect } from "react";
 import "./Styles/App.css";
-import { MenuItem, FormControl, Select } from "@material-ui/core";
+import {
+  CardContent,
+  Card,
+  FormControl,
+  Select,
+  MenuItem,
+} from "@material-ui/core";
 import Axios from "axios";
+import InfoBoxes from "./components/InfoBoxes";
+import Map from "./components/Map";
 
 function App() {
   const [countries, setCountries] = useState([]);
+  const [country, setCountry] = useState("worldwide");
+  const [countryInfo, setCountryInfo] = useState({});
 
-  // useEffect(() => {
-  //   const url = "https://disease.sh/v3/covid-19/countries";
-  //   const getCountriesData = async () => {
-  //     await fetch(url)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         const countries = data.map((country) => ({
-  //           name: country.country,
-  //           value: country.countryInfo.iso2,
-  //           id: country.countryInfo._id,
-  //         }));
-  //         setCountries(countries);
-  //       });
-  //   };
-  //   getCountriesData();
-  // }, []);
+  const capitalize = (countryName) => {
+    return countryName.charAt(0).toUpperCase() + countryName.slice(1);
+  };
+
+  useEffect(() => {
+    Axios.get("https://disease.sh/v3/covid-19/all").then((response) => {
+      setCountryInfo(response.data);
+    });
+  }, []);
 
   useEffect(() => {
     const url = "https://disease.sh/v3/covid-19/countries";
@@ -35,31 +38,71 @@ function App() {
     });
   }, []);
 
+  const changeCountryInfo = (countryCode) => {
+    const url =
+      countryCode === "worldwide"
+        ? `https://disease.sh/v3/covid-19/all`
+        : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+
+    Axios.get(url).then((response) => {
+      setCountryInfo(response.data);
+    });
+  };
+
+  const onCountryChange = async (event) => {
+    const countryCode = event.target.value;
+    setCountry(countryCode);
+
+    changeCountryInfo(countryCode);
+  };
+
   return (
-    <div className="App">
-      {/* Header */}
-      <div className="app__header">
-        <h1>COVID-19 TRACKER</h1>
-        <FormControl className="app__dropdown">
-          <Select variant="outlined" value="abc">
-            {countries.map((country) => (
-              <MenuItem key={country.id} value={country.value}>
-                {country.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+    <div className="app">
+      <div className="app__left">
+        {/* Header with select input*/}
+        <div className="app__header">
+          <h1>COVID-19 TRACKER</h1>
+          <h2>
+            {country === "worldwide"
+              ? capitalize(country)
+              : countryInfo.country}
+          </h2>
+
+          <FormControl className="app__dropdown">
+            <Select
+              variant="outlined"
+              onChange={onCountryChange}
+              value={country}
+            >
+              <MenuItem value="worldwide">Worldwide</MenuItem>
+              {countries.map((country) => (
+                <MenuItem value={country.value}>{country.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+
+        {/* Infoboxs */}
+        <InfoBoxes
+          cases={countryInfo.cases}
+          todayCases={countryInfo.todayCases}
+          recovered={countryInfo.recovered}
+          todayRecovered={countryInfo.todayRecovered}
+          deaths={countryInfo.deaths}
+          todayDeaths={countryInfo.todayDeaths}
+        />
+
+        {/* Map */}
+        <Map />
       </div>
-
-      {/* Titlte + Select input */}
-      {/* Infoboxs */}
-      {/* Infoboxs */}
-      {/* Infoboxs */}
-
-      {/* Table */}
-      {/* Graph */}
-
-      {/* Map */}
+      <Card className="app__right">
+        <CardContent>
+          <h3>Live Cases by Country</h3>
+          {/* Table */}
+          <h3>Worldwide new cases</h3>
+          {/* Graph */}
+        </CardContent>
+      </Card>
     </div>
   );
 }
