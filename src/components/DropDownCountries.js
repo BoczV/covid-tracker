@@ -5,6 +5,7 @@ import DropDownCountry from "./DropDownCountry";
 function DropDownCountries(props) {
   const onCountryChange = async (event) => {
     const countryCode = event.target.value;
+    console.log(countryCode);
   };
 
   return (

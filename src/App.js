@@ -10,11 +10,15 @@ import {
 import Axios from "axios";
 import InfoBoxes from "./components/InfoBoxes";
 import Map from "./components/Map";
+import Table from "./components/Table";
+import { sortData } from "./Util/sort";
+import LineGraph from "./components/LineGraph";
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
+  const [tableData, setTableData] = useState([]);
 
   const capitalize = (countryName) => {
     return countryName.charAt(0).toUpperCase() + countryName.slice(1);
@@ -34,6 +38,8 @@ function App() {
         value: country.countryInfo.iso2,
         id: country.countryInfo._id,
       }));
+      const sortedData = sortData(res.data);
+      setTableData(sortedData);
       setCountries(countries);
     });
   }, []);
@@ -51,8 +57,8 @@ function App() {
 
   const onCountryChange = async (event) => {
     const countryCode = event.target.value;
-    setCountry(countryCode);
 
+    setCountry(countryCode);
     changeCountryInfo(countryCode);
   };
 
@@ -97,10 +103,12 @@ function App() {
       </div>
       <Card className="app__right">
         <CardContent>
-          <h3>Live Cases by Country</h3>
           {/* Table */}
-          <h3>Worldwide new cases</h3>
+          <h3>Live Cases by Country</h3>
+          <Table countries={tableData} />
           {/* Graph */}
+          <h3>Worldwide new cases</h3>
+          <LineGraph />
         </CardContent>
       </Card>
     </div>
