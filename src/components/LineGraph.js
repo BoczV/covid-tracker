@@ -76,6 +76,8 @@ function LineGraph({ casesType = "cases" }) {
 
   return (
     <div>
+      <br />
+      <h3>Worldwide new cases</h3>
       {data?.length > 0 && (
         <Line
           options={options}

@@ -13,12 +13,17 @@ import Map from "./components/Map";
 import Table from "./components/Table";
 import { sortData } from "./Util/sort";
 import LineGraph from "./components/LineGraph";
+import "leaflet/dist/leaflet.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
+  const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
+  const [mapZoom, setMapZoom] = useState(3);
+  const [mapCountries, setMapCountries] = useState([]);
+  // const [casesType, setCasesType] = useState("cases")
 
   const capitalize = (countryName) => {
     return countryName.charAt(0).toUpperCase() + countryName.slice(1);
@@ -40,6 +45,7 @@ function App() {
       }));
       const sortedData = sortData(res.data);
       setTableData(sortedData);
+      setMapCountries(res.data);
       setCountries(countries);
     });
   }, []);
@@ -52,12 +58,16 @@ function App() {
 
     Axios.get(url).then((response) => {
       setCountryInfo(response.data);
+      setMapCenter([
+        response.data.countryInfo.lat,
+        response.data.countryInfo.long,
+      ]);
+      setMapZoom(4);
     });
   };
 
   const onCountryChange = async (event) => {
     const countryCode = event.target.value;
-
     setCountry(countryCode);
     changeCountryInfo(countryCode);
   };
@@ -99,15 +109,13 @@ function App() {
         />
 
         {/* Map */}
-        <Map />
+        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
       </div>
       <Card className="app__right">
         <CardContent>
           {/* Table */}
-          <h3>Live Cases by Country</h3>
           <Table countries={tableData} />
           {/* Graph */}
-          <h3>Worldwide new cases</h3>
           <LineGraph />
         </CardContent>
       </Card>

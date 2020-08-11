@@ -1,5 +1,6 @@
 import React from "react";
 import InfoBox from "./InfoBox";
+import { prettyPrintStat } from "../Util/prettyPrintStat";
 
 function InfoBoxes({
   cases,
@@ -11,9 +12,21 @@ function InfoBoxes({
 }) {
   return (
     <div className="app__stats">
-      <InfoBox title="Coronavirus Cases" cases={todayCases} total={cases} />
-      <InfoBox title="Recovered" cases={todayRecovered} total={recovered} />
-      <InfoBox title="Deaths" cases={todayDeaths} total={deaths} />
+      <InfoBox
+        title="Coronavirus Cases"
+        cases={prettyPrintStat(todayCases)}
+        total={prettyPrintStat(cases)}
+      />
+      <InfoBox
+        title="Recovered"
+        cases={prettyPrintStat(todayRecovered)}
+        total={prettyPrintStat(recovered)}
+      />
+      <InfoBox
+        title="Deaths"
+        cases={prettyPrintStat(todayDeaths)}
+        total={prettyPrintStat(deaths)}
+      />
     </div>
   );
 }
