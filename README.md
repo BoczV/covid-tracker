@@ -3,7 +3,6 @@
 ## Introduction
 
 Using Covid Tracker, you can check the latest news according to covid pandemia. You will find news from every country in the world using my project's infographics.
-Link: git@github.com:BoczV/covid-tracker.git
 
 ![alt text](https://github.com/BoczV/covid-tracker/blob/master/./public/covid19.png?raw=true)
 
